@@ -25,21 +25,19 @@ jobs:
         run: |
           $runCount = $Env:GITHUB_RUN_NUMBER
           $version = "v${runCount}"
-          Write-Output "::set-output name=VERSION::$version"
+          echo "VERSION=$version" >> $GITHUB_ENV
 
       - name: Create Git Tag
-        id: create_tag
         shell: pwsh
         run: |
           $tag = $Env:VERSION
           git tag $tag
           git push origin $tag
-          Write-Output "::set-output name=TAG::$tag"
 
       - name: Create GitHub Release
         shell: pwsh
         run: |
-          $tag = $Env:TAG
+          $tag = $Env:VERSION
           $body = "Automated release for version $tag"
 
           $token = $Env:GITHUB_TOKEN
