@@ -24,7 +24,7 @@ jobs:
         shell: pwsh
         run: |
           $runCount = $Env:GITHUB_RUN_NUMBER
-          $version = "version ${runCount}"
+          $version = "v${runCount}"
           Write-Output "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
       - name: Create Git Tag
