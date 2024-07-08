@@ -45,7 +45,7 @@ jobs:
               "Authorization" = "token $token"
               "Accept" = "application/vnd.github.v3+json"
           }
-          $uri = "https://api.github.com/repos/owner/repo/releases"
+          $uri = "https://api.github.com/repos/gpranaykumar/GH-Action-Tag-Release/releases"
           $bodyObject = @{
               tag_name = $tag
               name = "Release $tag"
