@@ -25,7 +25,7 @@ jobs:
         run: |
           $runCount = $Env:GITHUB_RUN_NUMBER
           $version = "v${runCount}"
-          echo "VERSION=$version" >> $GITHUB_ENV
+          Write-Output "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
       - name: Create Git Tag
         shell: pwsh
@@ -54,7 +54,12 @@ jobs:
               prerelease = $false
           } | ConvertTo-Json
 
-          Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $bodyObject
+          try {
+              Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $bodyObject -ErrorAction Stop
+          } catch {
+              Write-Error $_.Exception.Message
+              exit 1
+          }
 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
