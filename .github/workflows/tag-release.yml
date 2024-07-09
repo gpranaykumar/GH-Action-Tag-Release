@@ -78,7 +78,7 @@ jobs:
               sha = $commitSHA
           } | ConvertTo-Json
 
-          $uri = "https://api.github.com/repos/owner/repo/git/refs"
+          $uri = "https://api.github.com/repos/gpranaykumar/GH-Action-Tag-Release/git/refs"
 
           try {
               Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $body -ErrorAction Stop
