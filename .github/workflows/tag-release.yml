@@ -50,9 +50,9 @@ jobs:
               tag_name = $tag
               name = "Release $tag"
               body = $body
-              draft = $false
-              prerelease = $false
           } | ConvertTo-Json
+              # draft = $false
+              # prerelease = $false
 
           try {
               Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $bodyObject -ErrorAction Stop
