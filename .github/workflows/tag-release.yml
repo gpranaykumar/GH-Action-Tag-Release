@@ -27,39 +27,64 @@ jobs:
           $version = "v${runCount}"
           Write-Output "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
-      - name: Create Git Tag
-        shell: pwsh
-        run: |
-          $tag = $Env:VERSION
-          git tag $tag
-          git push origin $tag
+      # - name: Create Git Tag
+      #   shell: pwsh
+      #   run: |
+      #     $tag = $Env:VERSION
+      #     git tag $tag
+      #     git push origin $tag
 
-      - name: Create GitHub Release
+      # - name: Create GitHub Release
+      #   shell: pwsh
+      #   run: |
+      #     $tag = $Env:VERSION
+      #     $body = "Automated release for version $tag"
+
+      #     $token = $Env:GITHUB_TOKEN
+      #     $headers = @{
+      #         "Authorization" = "token $token"
+      #         "Accept" = "application/vnd.github.v3+json"
+      #     }
+      #     $uri = "https://api.github.com/repos/gpranaykumar/GH-Action-Tag-Release/releases"
+      #     $bodyObject = @{
+      #         tag_name = $tag
+      #         name = "Release $tag"
+      #         body = $body
+      #     } | ConvertTo-Json
+      #         # draft = $false
+      #         # prerelease = $false
+
+      #     try {
+      #         Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $bodyObject -ErrorAction Stop
+      #     } catch {
+      #         Write-Error $_.Exception.Message
+      #         exit 1
+      #     }
+      - name: Create Tag via API
         shell: pwsh
         run: |
-          $tag = $Env:VERSION
-          $body = "Automated release for version $tag"
+          $commitSHA = $Env:COMMIT_SHA
+          $tagName =  $Env:VERSION 
 
           $token = $Env:GITHUB_TOKEN
           $headers = @{
               "Authorization" = "token $token"
               "Accept" = "application/vnd.github.v3+json"
           }
-          $uri = "https://api.github.com/repos/gpranaykumar/GH-Action-Tag-Release/releases"
-          $bodyObject = @{
-              tag_name = $tag
-              name = "Release $tag"
-              body = $body
+
+          $body = @{
+              ref = "refs/tags/$tagName"
+              sha = $commitSHA
           } | ConvertTo-Json
-              # draft = $false
-              # prerelease = $false
+
+          $uri = "https://api.github.com/repos/owner/repo/git/refs"
 
           try {
-              Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $bodyObject -ErrorAction Stop
+              Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $body -ErrorAction Stop
+              Write-Output "Tag $tagName created successfully."
           } catch {
-              Write-Error $_.Exception.Message
+              Write-Error "Error creating tag: $_"
               exit 1
           }
-
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
