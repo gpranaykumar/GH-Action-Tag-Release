@@ -1,4 +1,6 @@
 name: Tag and Release with API
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 on:
   push:
@@ -83,5 +85,4 @@ jobs:
               exit 1
           }
 
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
