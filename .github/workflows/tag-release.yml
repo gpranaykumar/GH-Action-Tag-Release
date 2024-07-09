@@ -55,6 +55,33 @@ jobs:
               Write-Error "Error creating tag: $_"
               exit 1
           }
+      - name: Create GitHub Release
+        shell: pwsh
+        run: |
+          $tagName = $Env:VERSION
+          $body = "Automated release for version $tagName"
+
+          $token = $Env:GITHUB_TOKEN
+          $headers = @{
+              "Authorization" = "token $token"
+              "Accept" = "application/vnd.github.v3+json"
+          }
+
+          $releaseBody = @{
+              tag_name = $tagName
+              name = "Release $tagName"
+              body = $body
+          } | ConvertTo-Json
+
+          $releaseUri = "https://api.github.com/repos/gpranaykumar/GH-Action-Tag-Release/releases"
+
+          try {
+              Invoke-RestMethod -Uri $releaseUri -Method Post -Headers $headers -Body $releaseBody -ErrorAction Stop
+              Write-Output "Release $tagName created successfully."
+          } catch {
+              Write-Error "Error creating release: $_"
+              exit 1
+          }
 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
