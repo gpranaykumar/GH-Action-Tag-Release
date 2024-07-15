@@ -1,0 +1,28 @@
+name: Input DropDown Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      batch:
+        description: 'Select a batch number'
+        required: true
+        default: '1'
+        type: choice
+        options:
+          - 1
+          - 2
+          - 3
+          - 4
+
+jobs:
+  example_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Run PowerShell Script
+        shell: pwsh
+        run: |
+          $batch = $env:INPUT_BATCH
+          Write-Host "Selected batch: $batch"
